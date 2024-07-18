@@ -44,7 +44,7 @@
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "mysql": "^2.18.1",
+    "mysql2": "^3.10.3",
     "needle": "^2.6.0",
     "nestjs-i18n": "^8.0.10",
     "nestjs-real-ip": "^2.2.0",

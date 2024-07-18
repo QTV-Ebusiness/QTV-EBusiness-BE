@@ -5,13 +5,13 @@
   },
   "[typescript]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll": true
+      "source.fixAll": "explicit"
     },
     "editor.formatOnSave": true
   },
   "[javascript]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll": true
+      "source.fixAll": "explicit"
     },
     "editor.formatOnSave": true
   },
