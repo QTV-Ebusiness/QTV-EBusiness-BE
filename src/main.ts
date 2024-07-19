@@ -12,7 +12,6 @@ import * as basicAuth from 'express-basic-auth';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const accounts = process.env.SWAGGER_DOC_USER;
-  console.log('accounts:', accounts);
   app.use(
     ['/api'],
     basicAuth({
