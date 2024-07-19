@@ -14,9 +14,7 @@ import { Account, Profile } from 'libs/entities';
 @Module({
   imports: [
     RequestContextModule,
-    ConfigModule.forRoot({
-      envFilePath: ['.env'],
-    }),
+    ConfigModule.forRoot({ envFilePath: '.env' }),
     TypeOrmModule.forFeature([Profile, Account]),
     TypeOrmModule.forRoot({
       type: 'mysql',
