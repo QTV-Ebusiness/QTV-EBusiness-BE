@@ -44,6 +44,6 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionsFilter());
   app.useGlobalInterceptors(new TimeoutInterceptor());
   app.useGlobalInterceptors(new HttpTransformInterceptor());
-  await app.listen(3000);
+  await app.listen(process.env.HOST_PORT || 3000);
 }
 void bootstrap();
