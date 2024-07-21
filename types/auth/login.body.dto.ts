@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsString } from 'class-validator';
 
 export class LoginBodyDTO {
-  @ApiProperty({ example: 'annguyen@escorti.com.vn', required: true })
+  @ApiProperty({ example: '0987654321', required: true })
   @IsString()
   username: string;
 

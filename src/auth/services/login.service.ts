@@ -59,7 +59,7 @@ export class LoginService {
   public async login(body: LoginBodyDTO) {
     const { username, password } = body;
     const account = await getRepository(Account).findOne({
-      email: username,
+      phone: username,
       isDeleted: false,
     });
     if (isEmpty(account)) {

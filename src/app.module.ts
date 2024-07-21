@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { Account, Profile } from 'libs/entities';
 import { ExternalModule } from './external/external.module';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ExternalModule } from './external/external.module';
     }),
     AuthModule,
     ExternalModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [

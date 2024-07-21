@@ -8,36 +8,17 @@ export class Account {
   @Column('tinyint', { name: 'is_deleted', width: 1, default: () => "'0'" })
   isDeleted: boolean;
 
-  @Column('tinyint', { name: 'is_activated', width: 1, default: () => "'0'" })
-  isActivated: boolean;
+  @Column('varchar', { name: 'full_name', nullable: true, length: 255 })
+  fullName: string | null;
 
-  @Column('varchar', { name: 'email', nullable: true, length: 255 })
-  email: string | null;
-
-  @Column('varchar', { name: 'status', nullable: true, length: 20 })
-  status: string | null;
+  @Column('varchar', { name: 'phone', nullable: true, length: 10 })
+  phone: string | null;
 
   @Column('varchar', { name: 'password_hash', nullable: true, length: 255 })
   passwordHash: string | null;
 
   @Column('varchar', { name: 'password_salt', nullable: true, length: 255 })
   passwordSalt: string | null;
-
-  @Column('int', { name: 'organization_id', nullable: true })
-  organizationId: number;
-
-  @Column('int', { name: 'role_id', nullable: true })
-  roleId: number | null;
-
-  @Column('text', { name: 'account_type', nullable: true })
-  accountType: string | null;
-
-  @Column('tinyint', {
-    name: 'is_phone_verified',
-    width: 1,
-    default: () => "'0'",
-  })
-  isPhoneVerified: boolean;
 
   @Column('datetime', { name: 'created_at', nullable: true })
   createdAt: Date | null;
