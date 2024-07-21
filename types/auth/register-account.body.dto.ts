@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, ValidateIf } from 'class-validator';
-import { ifExistedValue } from 'libs/utils';
+import { IsString } from 'class-validator';
 
 export class RegisterAccountBodyDTO {
   @ApiProperty({ example: 'Nguyen  Van A', required: true })

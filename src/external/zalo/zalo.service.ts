@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-
+import { response } from 'libs/utils';
+import { SendBroadcastBodyDTO, SendMessageBodyDTO } from 'types';
 @Injectable()
 export class ZaloService {
   public async createArticle() {
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
     const body = {
       type: 'normal',
       title: 'News',
@@ -29,21 +31,21 @@ export class ZaloService {
     };
 
     const apiUrl = 'https://openapi.zalo.me/v2.0/article/create';
-    const accessToken = '';
     try {
-      const response = await axios.post(apiUrl, body, {
+      const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
           access_token: accessToken,
         },
       });
-      return response;
+      return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
     }
   }
 
   public async updateArticle() {
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
     const body = {
       id: 'a45424s214ddertd214g',
       type: 'normal',
@@ -69,48 +71,47 @@ export class ZaloService {
       comment: 'show',
     };
     const apiUrl = 'https://openapi.zalo.me/v2.0/article/update';
-    const accessToken = '';
     try {
-      const response = await axios.post(apiUrl, body, {
+      const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
           access_token: accessToken,
         },
       });
-      return response;
+      return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
     }
   }
 
-  public async getArticle() {
-    const id = '2d845d1da6584f061649';
-    const apiUrl = `https://openapi.zalo.me/v2.0/article/getdetail?id=${id}`;
-    const accessToken = '';
+  public async getArticle(zaloPostId: string) {
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const apiUrl = `https://openapi.zalo.me/v2.0/article/getdetail?id=${zaloPostId}`;
     try {
-      const response = await axios.get(apiUrl, {
+      const result = await axios.get(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
           access_token: accessToken,
         },
       });
-      return response;
+      return response(200, 'SUCCESSFULLY', result.data.data);
     } catch (error) {
       console.error(error);
     }
   }
 
   public async getArticles() {
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
     const apiUrl = `https://openapi.zalo.me/v2.0/article/getslice?offset=0&limit=1&type=normal`;
-    const accessToken = '';
     try {
-      const response = await axios.get(apiUrl, {
+      const result = await axios.get(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token:
+            '2e00KTGLxKy0ZWjIrHdjH0k92LdL18aOV8fkKyXhZpHiyMnPn23U1MJhI6R0V-KgPhvXD_T7Wavat6G7vIc7OsZk6c3s5BiiGjXTLTmLvonCXtzOyqZZ1dY8UKtFSvGNV-XpPj0Erda3daqPjmxg13pfQs2CVUeMFUPmUhWnaM9hsG8OzW-lHrxQAWhXEgT-SQn4OF1xtWPUd3rdzbYf4IcyIdhwUlaQP8zeVUfbqnjNj4nM_4VCI7-F8L_nPhm0P_0WHjCvXGT2jnL8uIoa852YIK2QDSWD7l1rO8mWwGyEpmvoh0Yv4WYT5Gc6SvD1CwCE5xjujdGEgri0cqt87YMbMs2WSBSP4x5RKfqhepKGmKH1aJlh0JJC2K6sLerS8gzf98vZwduB-NmrkJJpGmIaSbnjGkUZrIxP3UH8',
         },
       });
-      return response;
+      return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
     }
@@ -120,23 +121,23 @@ export class ZaloService {
     const body = {
       id: '',
     };
-
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
     const apiUrl = `https://openapi.zalo.me/v2.0/article/remove`;
-    const accessToken = '';
     try {
-      const response = await axios.post(apiUrl, body, {
+      const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
           access_token: accessToken,
         },
       });
-      return response;
+      return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
     }
   }
 
   public async sendMessagePromotion() {
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
     const body = {
       recipient: {
         user_id: '2473910995809050719',
@@ -203,21 +204,21 @@ export class ZaloService {
       },
     };
     const apiUrl = 'https://openapi.zalo.me/v3.0/oa/message/promotion';
-    const accessToken = '';
     try {
-      const response = await axios.post(apiUrl, body, {
+      const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
           access_token: accessToken,
         },
       });
-      return response;
+      return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
     }
   }
 
-  public async sendBroadcast() {
+  public async sendBroadcast(payload: SendBroadcastBodyDTO) {
+    const { attachmentId } = payload;
     const body = {
       recipient: {
         target: {
@@ -232,7 +233,7 @@ export class ZaloService {
             elements: [
               {
                 media_type: 'article',
-                attachment_id: '2d845d1da6584f061649',
+                attachment_id: attachmentId,
               },
             ],
           },
@@ -240,28 +241,32 @@ export class ZaloService {
       },
     };
     const apiUrl = 'https://openapi.zalo.me/v2.0/oa/message';
-    const accessToken = '';
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
     try {
-      const response = await axios.post(apiUrl, body, {
+      const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
           access_token: accessToken,
         },
       });
-      return response;
+      return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
     }
   }
 
-  public async sendMessage() {
+  public async sendMessage(payload: SendMessageBodyDTO) {
+    const { userId, text, photoUrl } = payload;
     const body = {
       recipient: {
-        user_id: '2473910995809050719',
+        user_id: userId,
       },
       message: {
-        text: 'Hello World!',
-        //image attachment: optional
+        text,
+      },
+    };
+    if (photoUrl) {
+      Object.assign(body.message, {
         attachment: {
           type: 'template',
           payload: {
@@ -269,23 +274,23 @@ export class ZaloService {
             elements: [
               {
                 media_type: 'image',
-                url: 'https://stc-developers.zdn.vn/images/bg_1.jpg',
+                url: photoUrl,
               },
             ],
           },
         },
-      },
-    };
+      });
+    }
     const apiUrl = 'https://openapi.zalo.me/v3.0/oa/message/cs';
-    const accessToken = '';
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
     try {
-      const response = await axios.post(apiUrl, body, {
+      const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
           access_token: accessToken,
         },
       });
-      return response;
+      return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
     }

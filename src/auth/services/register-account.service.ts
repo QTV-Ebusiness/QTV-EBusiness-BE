@@ -30,7 +30,6 @@ export class RegisterAccountService {
         passwordSalt,
         createdAt: new Date(),
       });
-      console.log('RegisterAccountService => account:', account);
       await queryRunner.commitTransaction();
       return response(200, 'REGISTER_ACCOUNT_SUCCESSFULLY', { account });
     } catch (error) {

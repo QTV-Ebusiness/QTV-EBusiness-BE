@@ -74,9 +74,7 @@ export class AuthController {
   ) {}
   @Post('register-account')
   registerAccount(@Body() body: RegisterAccountBodyDTO) {
-    const a = this.registerAccountService.registerAccount(body);
-    console.log('AuthController => a:', a);
-    return a;
+    return this.registerAccountService.registerAccount(body);
   }
 
   @Get('verify')
