@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import { Account, Profile } from 'libs/entities';
 import { ExternalModule } from './external/external.module';
 import { ArticleModule } from './article/article.module';
+import { ImageUploaderModule } from './image-uploader/image-uploader.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -35,6 +37,10 @@ import { ArticleModule } from './article/article.module';
     AuthModule,
     ExternalModule,
     ArticleModule,
+    ImageUploaderModule,
+    MulterModule.register({
+      dest: '../uploads',
+    }),
   ],
   controllers: [AppController],
   providers: [
