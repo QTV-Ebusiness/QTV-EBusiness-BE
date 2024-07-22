@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -12,6 +13,7 @@ import { HttpAccountId } from 'libs/utils';
 import { ArticleService } from './article.service';
 import { ArticleParamDTO, CreateArticleBodyDTO } from 'types/article';
 import { JwtAccessTokenGuard } from 'libs/middleware';
+import { PagingQueryDTO } from 'types';
 
 @Controller('')
 @ApiBearerAuth()
@@ -42,7 +44,7 @@ export class ArticleController {
   }
 
   @Get('articles')
-  getArticles() {
-    return this.articleService.getArticles();
+  getArticles(@Query() payload: PagingQueryDTO) {
+    return this.articleService.getArticles(payload);
   }
 }

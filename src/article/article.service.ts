@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Article } from 'libs/entities';
-import { response } from 'libs/utils';
+import { getQueryPaging, response } from 'libs/utils';
 import { getRepository } from 'typeorm';
 import { isEmpty } from 'lodash';
 import { CreateArticleBodyDTO } from 'types/article';
@@ -82,12 +82,16 @@ export class ArticleService {
     return response(200, 'SUCCESSFULL', article);
   }
 
-  public async getArticles() {
-    const articles = await getRepository(Article).find({
-      isDeleted: false,
+  public async getArticles(payload) {
+    const [skip, take] = getQueryPaging(payload);
+    const [articles, total] = await getRepository(Article).findAndCount({
+      where: { isDeleted: false },
+      order: { id: 'DESC' },
+      take,
+      skip,
     });
     if (isEmpty(articles)) return response(404, 'NOT_FOUND');
-    return response(200, 'SUCCESSFULL', articles);
+    return response(200, 'SUCCESSFULL', { result: articles, total });
   }
 
   public async deleteArticle(articleId: number, accountId: number) {
