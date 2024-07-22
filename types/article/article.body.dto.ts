@@ -24,6 +24,11 @@ export class CreateArticleBodyDTO {
   @IsString()
   content: string;
 
+  @ApiProperty({ example: 1, required: false })
+  @ValidateIf(ifExistedValue)
+  @IsString()
+  title: string;
+
   @ApiProperty({ example: '', required: false })
   @ValidateIf(ifExistedValue)
   @IsDateString()
@@ -58,6 +63,11 @@ export class CreateArticleBodyDTO {
   @ValidateIf(ifExistedValue)
   @IsBoolean()
   isInstagram: boolean;
+
+  @ApiProperty({ example: 1, required: false })
+  @ValidateIf(ifExistedValue)
+  @IsBoolean()
+  isCreateNow: boolean;
 }
 
 export class UpdateArticleBody extends CreateArticleBodyDTO {

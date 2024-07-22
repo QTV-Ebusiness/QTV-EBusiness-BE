@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { response } from 'libs/utils';
 
 @Injectable()
 export class FacebookService {
-  public async createPostWithImage() {
-    const accessToken = '';
+  public async createPostWithImage(payload) {
+    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const body = {
-      message:
-        'Hello, world! 🌍 Check out this image! 📸\nWebsite của toy: https://qtv.multichannel.cuocthien.io.vn/login',
+      message: payload.content,
       access_token: accessToken,
-      url: 'https://cdn.tgdd.vn/Products/Images/44/306141/msi-modern-15-b13m-i5-438vn-1.jpg',
+      url: payload.photoUrl,
       privacy: '{"value":"EVERYONE"}',
     };
     const pageId = '376516972209004';
     const apiUrl = `https://graph.facebook.com/v20.0/${pageId}/photos`;
     try {
       const result = await axios.post(apiUrl, new URLSearchParams(body));
-      return result;
+      return response(200, 'SUCCESSFULLY', result.data);
       /* res {
         "id": "122101771010422157",
         "post_id": "376516972209004_122101771070422157"
@@ -29,7 +29,7 @@ export class FacebookService {
 
   public async updatePost() {
     const postId = '376516972209004_122101764314422157';
-    const accessToken = '';
+    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const body = {
       message: 'toy update bài này nè',
       access_token: accessToken,
@@ -37,7 +37,7 @@ export class FacebookService {
     const apiUrl = `https://graph.facebook.com/v20.0/${postId}`;
     try {
       const result = await axios.post(apiUrl, new URLSearchParams(body));
-      return result;
+      return response(200, 'SUCCESSFULLY', result.data);
       /* res { success: true} */
     } catch (error) {
       console.log(error);
@@ -46,13 +46,13 @@ export class FacebookService {
 
   public async deletePost() {
     const postId = '376516972209004_122101764314422157';
-    const accessToken = '';
+    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const apiUrl = `https://graph.facebook.com/v20.0/${postId}`;
     try {
       const result = await axios.delete(apiUrl, {
         data: new URLSearchParams({ accessToken }),
       });
-      return result;
+      return response(200, 'SUCCESSFULLY', result.data);
       /* res { success: true} */
     } catch (error) {}
   }
@@ -61,45 +61,45 @@ export class FacebookService {
     const pageId = '376516972209004';
     const fields =
       'id,message,comments{attachment{media,type},comments{message,from, attachment{media,type}, like_count},like_count,user_likes,message,created_time,id,from,likes{picture,username,pic,id,name,user_likes},reactions.summary(true)},reactions{id,name,type,reactions.summary(true)},attachments{media,type},permalink_url';
-    const accessToken = '';
+    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const apiUrl = `https://graph.facebook.com/v20.0/${pageId}/posts`;
-    const response = await axios.get(
+    const result = await axios.get(
       `${apiUrl}?fields=${fields}&access_token=${accessToken}`,
     );
-    return response;
+    return response(200, 'SUCCESSDULLY', result.data);
   }
 
   public async getPost() {
     const postId = '376516972209004_122099158280422157';
     const fields =
       'id,message,comments{attachment{media,type},comments{message,from, attachment{media,type}, like_count},like_count,user_likes,message,created_time,id,from,likes{picture,username,pic,id,name,user_likes},reactions.summary(true)},reactions{id,name,type,reactions.summary(true)},attachments{media,type},permalink_url';
-    const accessToken = '';
+    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const apiUrl = `https://graph.facebook.com/v20.0/${postId}?`;
-    const response = await axios.get(`${apiUrl}${fields}&${accessToken}`);
-    return response;
+    const result = await axios.get(`${apiUrl}${fields}&${accessToken}`);
+    return response(200, 'SUCCESSDULLY', result.data);
   }
 
   public async getComment() {
     const postId = '376516972209004_122099158280422157';
-    const accessToken = '';
+    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const params = {
       access_token: accessToken,
     };
     const apiUrl = `https://graph.facebook.com/v20.0/${postId}/comments`;
     const result = await axios.get(apiUrl, { params });
-    return result;
+    return response(200, 'SUCCESSFULLY', result.data);
   }
 
   public async getReactions() {
     const postId = '376516972209004_122099158280422157';
-    const accessToken = '';
+    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const params = {
       access_token: accessToken,
       summary: 'true',
       type: 'HAHA', // [LIKE, HAHA, LOVE, CARE, ANGRY]
     };
     const apiUrl = `https://graph.facebook.com/v20.0/${postId}/reactions`;
-    const response = await axios.get(apiUrl, { params });
-    return response;
+    const result = await axios.get(apiUrl, { params });
+    return response(200, 'SUCCESSFULLY', result.data);
   }
 }

@@ -17,8 +17,14 @@ export class Article {
   @Column('text', { name: 'content', nullable: true })
   content: string | null;
 
+  @Column('text', { name: 'title', nullable: true })
+  title: string | null;
+
   @Column('datetime', { name: 'schedule_at', nullable: true })
   scheduleAt: Date | null;
+
+  @Column('int', { name: 'is_create_now', nullable: true })
+  isCreateNow: boolean | null;
 
   @Column('tinyint', { name: 'is_facebook', nullable: true })
   isFacebook: boolean | null;

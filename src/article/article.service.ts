@@ -3,15 +3,56 @@ import { Article } from 'libs/entities';
 import { response } from 'libs/utils';
 import { getRepository } from 'typeorm';
 import { isEmpty } from 'lodash';
+import { CreateArticleBodyDTO } from 'types/article';
+import { FacebookService } from 'src/external/facebook/facebook.service';
+import { ZaloService } from 'src/external/zalo/zalo.service';
 
 @Injectable()
 export class ArticleService {
-  public async createArticle(body, accountId: number) {
+  constructor(
+    private readonly facebookService: FacebookService,
+    private readonly zaloService: ZaloService,
+  ) {}
+  public async createArticle(body: CreateArticleBodyDTO, accountId: number) {
+    const {
+      content,
+      description,
+      isFacebook,
+      isZalo,
+      // isInstagram,
+      isCreateNow,
+      photoUrl,
+      title,
+    } = body;
     const article = await getRepository(Article).save({
       ...body,
       createdAt: new Date(),
       createdBy: accountId,
     });
+    if (isCreateNow) {
+      const [facebookPost, zaloPost] = await Promise.all([
+        isFacebook &&
+          this.facebookService.createPostWithImage({ content, photoUrl }),
+        isZalo &&
+          this.zaloService.createArticle({
+            title,
+            description,
+            content,
+            photoUrl,
+          }),
+      ]);
+      const zaloPostId =
+        zaloPost.status == 200
+          ? await this.zaloService.getArticleId(zaloPost.data.token)
+          : null;
+      const updateArticle = {
+        facebookPostId: facebookPost?.data?.post_id || null,
+        zaloPostId: zaloPostId?.data?.id,
+      };
+      getRepository(Article)
+        .update({ id: article.id }, updateArticle)
+        .catch((error) => console.log(error));
+    }
     return response(200, 'SUCCESSFULLY', article);
   }
 

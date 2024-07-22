@@ -4,26 +4,22 @@ import { response } from 'libs/utils';
 import { SendBroadcastBodyDTO, SendMessageBodyDTO } from 'types';
 @Injectable()
 export class ZaloService {
-  public async createArticle() {
+  public async createArticle(payload) {
     const accessToken = process.env.ZALO_ACCESS_TOKEN;
     const body = {
       type: 'normal',
-      title: 'News',
+      title: payload.title,
       author: 'News',
       cover: {
         cover_type: 'photo',
-        photo_url: 'https://stc-developers.zdn.vn/images/bg_1.jpg',
+        photo_url: payload.photoUrl,
         status: 'show',
       },
-      description: 'This is news',
+      description: payload.description,
       body: [
         {
           type: 'text',
-          content: 'This is news',
-        },
-        {
-          type: 'text',
-          content: 'This is news',
+          content: payload.content,
         },
       ],
       status: 'show',
@@ -38,6 +34,26 @@ export class ZaloService {
           access_token: accessToken,
         },
       });
+      return response(result.status, 'SUCCESSFULL', result.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  public async getArticleId(token: string) {
+    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const apiUrl = 'https://openapi.zalo.me/v2.0/article/verify';
+    try {
+      const result = await axios.post(
+        apiUrl,
+        { token: token },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            access_token: accessToken,
+          },
+        },
+      );
       return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
@@ -107,8 +123,7 @@ export class ZaloService {
       const result = await axios.get(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
-          access_token:
-            '2e00KTGLxKy0ZWjIrHdjH0k92LdL18aOV8fkKyXhZpHiyMnPn23U1MJhI6R0V-KgPhvXD_T7Wavat6G7vIc7OsZk6c3s5BiiGjXTLTmLvonCXtzOyqZZ1dY8UKtFSvGNV-XpPj0Erda3daqPjmxg13pfQs2CVUeMFUPmUhWnaM9hsG8OzW-lHrxQAWhXEgT-SQn4OF1xtWPUd3rdzbYf4IcyIdhwUlaQP8zeVUfbqnjNj4nM_4VCI7-F8L_nPhm0P_0WHjCvXGT2jnL8uIoa852YIK2QDSWD7l1rO8mWwGyEpmvoh0Yv4WYT5Gc6SvD1CwCE5xjujdGEgri0cqt87YMbMs2WSBSP4x5RKfqhepKGmKH1aJlh0JJC2K6sLerS8gzf98vZwduB-NmrkJJpGmIaSbnjGkUZrIxP3UH8',
+          access_token: accessToken,
         },
       });
       return response(200, 'SUCCESSFULL', result.data.data);
