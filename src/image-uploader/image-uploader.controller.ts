@@ -36,7 +36,7 @@ export class ImageUploaderController {
     }
     return res.status(200).json({
       uploaded: true,
-      url: `${process.env.HOST_URL}:${process.env.HOST_PORT}/uploads/${file.filename}`,
+      url: `${process.env.HOST_URL}/uploads/${file.filename}`,
     });
   }
 
