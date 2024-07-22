@@ -6,19 +6,15 @@ import { response } from 'libs/utils';
 export class InstagramService {
   public async createPost(payload) {
     const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
-    // const instagram_id = '17841467703626678';
-    // const container_api_url = `https://graph.facebook.com/v20.0/17841467703626678/media`;
+    const container_api_url = `https://graph.facebook.com/v20.0/17841467703626678/media`;
     const image_url = payload.photoUrl;
     const caption = payload.content;
     try {
-      const container = await axios.post(
-        `https://graph.instagram.com/me/media`,
-        {
-          image_url: image_url,
-          caption: caption,
-          access_token: accessToken,
-        },
-      );
+      const container = await axios.post(container_api_url, {
+        image_url: image_url,
+        caption: caption,
+        access_token: accessToken,
+      });
       // container : {"id": "18104492827415660"}
       const params = {
         access_token: accessToken,

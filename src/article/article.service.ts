@@ -6,12 +6,14 @@ import { isEmpty } from 'lodash';
 import { CreateArticleBodyDTO } from 'types/article';
 import { FacebookService } from 'src/external/facebook/facebook.service';
 import { ZaloService } from 'src/external/zalo/zalo.service';
+import { InstagramService } from 'src/external/instagram/instagram.service';
 
 @Injectable()
 export class ArticleService {
   constructor(
     private readonly facebookService: FacebookService,
     private readonly zaloService: ZaloService,
+    private readonly instagramService: InstagramService,
   ) {}
   public async createArticle(body: CreateArticleBodyDTO, accountId: number) {
     const {
@@ -19,7 +21,7 @@ export class ArticleService {
       description,
       isFacebook,
       isZalo,
-      // isInstagram,
+      isInstagram,
       isCreateNow,
       photoUrl,
       title,
@@ -39,6 +41,11 @@ export class ArticleService {
             description,
             content,
             photoUrl,
+          }),
+        isInstagram &&
+          this.instagramService.createPost({
+            photoUrl,
+            content,
           }),
       ]);
       const zaloPostId =
