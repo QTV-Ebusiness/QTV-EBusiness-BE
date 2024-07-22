@@ -8,11 +8,13 @@ import {
   Param,
   Res,
   HttpStatus,
+  UploadedFiles,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { existsSync } from 'fs';
 import { IgnoreTransform } from 'libs/middleware';
+import { response } from 'libs/utils';
 import { diskStorage } from 'multer';
 import { join } from 'path';
 
@@ -38,6 +40,29 @@ export class ImageUploaderController {
       uploaded: true,
       url: `${process.env.HOST_URL}/uploads/${file.filename}`,
     });
+  }
+
+  @Post('uploads')
+  @IgnoreTransform()
+  @UseInterceptors(
+    FilesInterceptor('files', 6, {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          callback(null, file.originalname);
+        },
+      }),
+    }),
+  )
+  uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
+    if (!files) {
+      throw new BadRequestException('File upload failed');
+    }
+    const url = [];
+    files.forEach((file) => {
+      url.push(`${process.env.HOST_URL}/uploads/${file.filename}`);
+    });
+    return response(200, 'SUCCESSFULLY', { url });
   }
 
   @IgnoreTransform()
