@@ -66,21 +66,25 @@ export class FacebookService {
     const result = await axios.get(
       `${apiUrl}?fields=${fields}&access_token=${accessToken}`,
     );
-    return response(200, 'SUCCESSDULLY', result.data);
+    return response(200, 'SUCCESSDULLY', result.data.data);
   }
 
-  public async getPost() {
-    const postId = '376516972209004_122099158280422157';
-    const fields =
-      'id,message,comments{attachment{media,type},comments{message,from, attachment{media,type}, like_count},like_count,user_likes,message,created_time,id,from,likes{picture,username,pic,id,name,user_likes},reactions.summary(true)},reactions{id,name,type,reactions.summary(true)},attachments{media,type},permalink_url';
-    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
-    const apiUrl = `https://graph.facebook.com/v20.0/${postId}?`;
-    const result = await axios.get(`${apiUrl}${fields}&${accessToken}`);
-    return response(200, 'SUCCESSDULLY', result.data);
+  public async getPost(postId: string) {
+    try {
+      const fields =
+        'id,message,comments{attachment{media,type},comments{message,from, attachment{media,type}, like_count},like_count,user_likes,message,created_time,id,from,likes{picture,username,pic,id,name,user_likes},reactions.summary(true)},reactions{id,name,type,reactions.summary(true)},attachments{media,type},permalink_url';
+      const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
+      const apiUrl = `https://graph.facebook.com/v20.0/${postId}?`;
+      const result = await axios.get(
+        `${apiUrl}field=${fields}&access_token=${accessToken}`,
+      );
+      return response(200, 'SUCCESSDULLY', result.data);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  public async getComment() {
-    const postId = '376516972209004_122099158280422157';
+  public async getComments(postId: string) {
     const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const params = {
       access_token: accessToken,
@@ -90,13 +94,13 @@ export class FacebookService {
     return response(200, 'SUCCESSFULLY', result.data);
   }
 
-  public async getReactions() {
-    const postId = '376516972209004_122099158280422157';
+  public async getReactions(payload) {
+    const { postId, type } = payload;
     const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const params = {
       access_token: accessToken,
       summary: 'true',
-      type: 'HAHA', // [LIKE, HAHA, LOVE, CARE, ANGRY]
+      type, // [LIKE, HAHA, LOVE, CARE, ANGRY]
     };
     const apiUrl = `https://graph.facebook.com/v20.0/${postId}/reactions`;
     const result = await axios.get(apiUrl, { params });
