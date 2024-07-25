@@ -28,7 +28,7 @@ export class InstagramService {
     }
   }
 
-  public async getPost() {
+  public async getAllPost() {
     const instagram_id = '17841467703626678';
     const api_url = `https://graph.facebook.com/v20.0/${instagram_id}/media`;
     const access_token = process.env.FACEBOOK_ACCESS_TOKEN;
@@ -37,6 +37,24 @@ export class InstagramService {
     const result = await axios.get(
       `${api_url}?access_token=${access_token}&fields=${fields}`,
     );
-    return response(200, 'SUCCESSFULLY', result.data);
+    return response(200, 'SUCCESSFULLY', result.data.data);
+  }
+
+  public async getPost(mediaId: string) {
+    try {
+      const fields =
+        'id,username,media_type, media_url,thumbnail_url,caption,comments{username,text,like_count},comments_count,like_count';
+
+      const access_token = process.env.FACEBOOK_ACCESS_TOKEN;
+      const result = await axios.get(
+        `https://graph.facebook.com/v20.0/${mediaId}?fields=${fields}&access_token=${access_token}`,
+      );
+      return response(200, 'SUCCESSFULLY', result.data);
+    } catch (error) {
+      console.error(
+        'Error fetching post details:',
+        error.response ? error.response.data : error.message,
+      );
+    }
   }
 }

@@ -1,8 +1,8 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { InstagramService } from './instagram.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAccessTokenGuard } from 'libs/middleware';
-import { CreatePostBodyDTO } from 'types/instagram';
+import { CreatePostBodyDTO, InstagramParamDTO } from 'types/instagram';
 
 @Controller('instagram')
 @ApiBearerAuth()
@@ -14,5 +14,15 @@ export class InstagramController {
   @Post('')
   createPost(@Body() body: CreatePostBodyDTO) {
     return this.instagramService.createPost(body);
+  }
+
+  @Get('posts')
+  getAllPost() {
+    return this.instagramService.getAllPost();
+  }
+
+  @Get('/post/:mediaId')
+  getPost(@Param() { mediaId }: InstagramParamDTO) {
+    return this.instagramService.getPost(mediaId);
   }
 }

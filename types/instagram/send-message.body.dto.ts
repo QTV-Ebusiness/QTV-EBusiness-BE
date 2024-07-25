@@ -11,8 +11,15 @@ export class CreatePostBodyDTO {
   @IsString()
   photoUrl: string;
 
-  @ApiProperty({ example: 'Hello World!', required: false })
+  @ApiProperty({ example: '', required: false })
   @ValidateIf(ifExistedValue)
   @IsString()
   content: string;
+}
+
+export class InstagramParamDTO {
+  @ApiProperty({ example: '', required: false })
+  @ValidateIf(ifExistedValue)
+  @IsString()
+  mediaId: string;
 }
