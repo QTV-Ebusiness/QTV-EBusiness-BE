@@ -32,7 +32,7 @@ export class ReactionQueryDTO {
   @ApiProperty({
     example: null,
     required: false,
-    enum: ['LIKE', 'HAHA', 'LOVE', 'CARE', 'ANGRY'],
+    enum: ['LIKE', 'HAHA', 'LOVE', 'CARE', 'ANGRY', 'SAD', 'WOW'],
   })
   @ValidateIf(ifExistedValue)
   @IsString()

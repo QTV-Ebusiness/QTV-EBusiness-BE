@@ -97,15 +97,25 @@ export class FacebookService {
   }
 
   public async getReactions(payload) {
-    const { postId, type } = payload;
+    const { postId } = payload;
+    const types = ['LIKE', 'HAHA', 'LOVE', 'CARE', 'ANGRY', 'SAD', 'WOW'];
     const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
-    const params = {
-      access_token: accessToken,
-      summary: 'true',
-      type, // [LIKE, HAHA, LOVE, CARE, ANGRY]
-    };
     const apiUrl = `https://graph.facebook.com/v20.0/${postId}/reactions`;
-    const result = await axios.get(apiUrl, { params });
-    return response(200, 'SUCCESSFULLY', result.data);
+    const array = [];
+
+    for (const type in types) {
+      const params = {
+        access_token: accessToken,
+        summary: 'true',
+        type: types[type],
+      };
+      const result = await axios.get(apiUrl, { params });
+      const a = {
+        type: types[type],
+        count: result.data.summary.total_count,
+      };
+      array.push(a);
+    }
+    return response(200, 'SUCCESSFULLY', array);
   }
 }
