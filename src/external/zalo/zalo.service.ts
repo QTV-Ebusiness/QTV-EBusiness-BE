@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ZaloToken } from 'libs/entities';
 import { response } from 'libs/utils';
-import { LessThan, MoreThan, getRepository } from 'typeorm';
+import { MoreThan, getRepository } from 'typeorm';
 import { SendBroadcastBodyDTO, SendMessageBodyDTO } from 'types';
 import * as moment from 'moment';
 @Injectable()
@@ -126,7 +126,7 @@ export class ZaloService {
       const result = await axios.get(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: zaloToken.data.Token,
+          access_token: zaloToken.data.accessToken,
         },
       });
       return response(200, 'SUCCESSFULL', result.data.data);

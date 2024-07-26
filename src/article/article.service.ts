@@ -15,6 +15,7 @@ export class ArticleService {
     private readonly zaloService: ZaloService,
     private readonly instagramService: InstagramService,
   ) {}
+
   public async createArticle(body: CreateArticleBodyDTO, accountId: number) {
     const {
       content,
@@ -57,9 +58,13 @@ export class ArticleService {
         zaloPostId: zaloPostId?.data?.id,
         instagramPostId: instagramPost.data.id || null,
       };
-      getRepository(Article)
-        .update({ id: article.id }, updateArticle)
-        .catch((error) => console.log(error));
+      Promise.all([
+        getRepository(Article).update({ id: article.id }, updateArticle),
+        isZalo &&
+          this.zaloService.sendBroadcast({
+            attachmentId: zaloPostId?.data?.id,
+          }),
+      ]).catch((error) => console.log(error));
     }
     return response(200, 'SUCCESSFULLY', article);
   }

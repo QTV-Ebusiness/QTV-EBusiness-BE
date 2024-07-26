@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ZaloService } from './zalo.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAccessTokenGuard } from 'libs/middleware';
-import { SendBroadcastBodyDTO, SendMessageBodyDTO, ZaloParamDTO } from 'types';
+import { SendMessageBodyDTO, ZaloParamDTO } from 'types';
 
 @Controller('zalo')
 @ApiBearerAuth()
@@ -16,7 +16,7 @@ export class ZaloController {
     return this.zaloService.getArticle(zaloPostId);
   }
 
-  @Get('articles')
+  @Get('/articles/list')
   getArticles() {
     return this.zaloService.getArticles();
   }
