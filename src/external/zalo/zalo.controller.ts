@@ -26,8 +26,8 @@ export class ZaloController {
     return this.zaloService.sendMessage(body);
   }
 
-  @Post('broadcast')
-  sendBroadcast(@Body() body: SendBroadcastBodyDTO) {
-    return this.zaloService.sendBroadcast(body);
+  @Get('/access-token/generate')
+  getAccessToken() {
+    return this.zaloService.getAccessToken();
   }
 }

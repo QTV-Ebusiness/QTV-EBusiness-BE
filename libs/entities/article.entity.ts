@@ -11,6 +11,9 @@ export class Article {
   @Column('text', { name: 'photo_url', nullable: true })
   photoUrl: string | null;
 
+  @Column('text', { name: 'cover', nullable: true })
+  cover: string | null;
+
   @Column('text', { name: 'description', nullable: true })
   description: string | null;
 

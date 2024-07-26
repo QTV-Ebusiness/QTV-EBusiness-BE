@@ -32,7 +32,7 @@ export class ArticleService {
       createdBy: accountId,
     });
     if (isCreateNow) {
-      const [facebookPost, zaloPost] = await Promise.all([
+      const [facebookPost, zaloPost, instagramPost] = await Promise.all([
         isFacebook &&
           this.facebookService.createPostWithImage({ content, photoUrl }),
         isZalo &&
@@ -55,6 +55,7 @@ export class ArticleService {
       const updateArticle = {
         facebookPostId: facebookPost?.data?.post_id || null,
         zaloPostId: zaloPostId?.data?.id,
+        instagramPostId: instagramPost.data.id || null,
       };
       getRepository(Article)
         .update({ id: article.id }, updateArticle)

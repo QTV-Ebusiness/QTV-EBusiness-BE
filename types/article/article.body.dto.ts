@@ -17,6 +17,11 @@ export class CreateArticleBodyDTO {
   @ApiProperty({ example: 1, required: false })
   @ValidateIf(ifExistedValue)
   @IsString()
+  cover: string;
+
+  @ApiProperty({ example: 1, required: false })
+  @ValidateIf(ifExistedValue)
+  @IsString()
   description: string;
 
   @ApiProperty({ example: 1, required: false })

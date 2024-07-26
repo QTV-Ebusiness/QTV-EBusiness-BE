@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { ZaloToken } from 'libs/entities';
 import { response } from 'libs/utils';
+import { LessThan, MoreThan, getRepository } from 'typeorm';
 import { SendBroadcastBodyDTO, SendMessageBodyDTO } from 'types';
+import * as moment from 'moment';
 @Injectable()
 export class ZaloService {
   public async createArticle(payload) {
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     const body = {
       type: 'normal',
       title: payload.title,
@@ -31,7 +34,7 @@ export class ZaloService {
       const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token: zaloToken.data.accessToken,
         },
       });
       return response(result.status, 'SUCCESSFULL', result.data.data);
@@ -41,7 +44,7 @@ export class ZaloService {
   }
 
   public async getArticleId(token: string) {
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     const apiUrl = 'https://openapi.zalo.me/v2.0/article/verify';
     try {
       const result = await axios.post(
@@ -50,7 +53,7 @@ export class ZaloService {
         {
           headers: {
             'Content-Type': 'application/json',
-            access_token: accessToken,
+            access_token: zaloToken.data.accessToken,
           },
         },
       );
@@ -61,7 +64,7 @@ export class ZaloService {
   }
 
   public async updateArticle() {
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     const body = {
       id: 'a45424s214ddertd214g',
       type: 'normal',
@@ -91,7 +94,7 @@ export class ZaloService {
       const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token: zaloToken.data.accessToken,
         },
       });
       return response(200, 'SUCCESSFULL', result.data.data);
@@ -101,13 +104,13 @@ export class ZaloService {
   }
 
   public async getArticle(zaloPostId: string) {
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     const apiUrl = `https://openapi.zalo.me/v2.0/article/getdetail?id=${zaloPostId}`;
     try {
       const result = await axios.get(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token: zaloToken.data.accessToken,
         },
       });
       return response(200, 'SUCCESSFULLY', result.data.data);
@@ -117,13 +120,13 @@ export class ZaloService {
   }
 
   public async getArticles() {
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     const apiUrl = `https://openapi.zalo.me/v2.0/article/getslice?offset=0&limit=1&type=normal`;
     try {
       const result = await axios.get(apiUrl, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token: zaloToken.data.Token,
         },
       });
       return response(200, 'SUCCESSFULL', result.data.data);
@@ -136,13 +139,13 @@ export class ZaloService {
     const body = {
       id: '',
     };
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     const apiUrl = `https://openapi.zalo.me/v2.0/article/remove`;
     try {
       const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token: zaloToken.data.accessToken,
         },
       });
       return response(200, 'SUCCESSFULL', result.data.data);
@@ -152,7 +155,7 @@ export class ZaloService {
   }
 
   public async sendMessagePromotion() {
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     const body = {
       recipient: {
         user_id: '2473910995809050719',
@@ -223,7 +226,7 @@ export class ZaloService {
       const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token: zaloToken.data.accessToken,
         },
       });
       return response(200, 'SUCCESSFULL', result.data.data);
@@ -256,12 +259,12 @@ export class ZaloService {
       },
     };
     const apiUrl = 'https://openapi.zalo.me/v2.0/oa/message';
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     try {
       const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token: zaloToken.data.accessToken,
         },
       });
       return response(200, 'SUCCESSFULL', result.data.data);
@@ -297,17 +300,51 @@ export class ZaloService {
       });
     }
     const apiUrl = 'https://openapi.zalo.me/v3.0/oa/message/cs';
-    const accessToken = process.env.ZALO_ACCESS_TOKEN;
+    const zaloToken = await this.getAccessToken();
     try {
       const result = await axios.post(apiUrl, body, {
         headers: {
           'Content-Type': 'application/json',
-          access_token: accessToken,
+          access_token: zaloToken.data.accessToken,
         },
       });
       return response(200, 'SUCCESSFULL', result.data.data);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  public async getAccessToken() {
+    const zaloToken = await getRepository(ZaloToken).findOne({
+      id: 1,
+      isDeleted: false,
+      expireAt: MoreThan(moment().subtract(3, 'hours').toDate()),
+    });
+    if (zaloToken) {
+      return response(200, 'SUCCESSFULLY', zaloToken);
+    }
+    const refreshToken = zaloToken.refreshToken;
+    const result = await axios.post(
+      'https://oauth.zaloapp.com/v4/oa/access_token',
+      new URLSearchParams({
+        refresh_token: refreshToken,
+        app_id: '1796803833243893139',
+        grant_type: 'refresh_token',
+      }),
+      {
+        headers: {
+          secret_key: process.env.ZALO_SECRET_KEY,
+        },
+      },
+    );
+    await getRepository(ZaloToken).update(
+      { id: 1 },
+      {
+        accessToken: result.data.access_token,
+        refreshToken: result.data.refresh_token,
+        expireAt: moment().add(1, 'days').toDate(),
+      },
+    );
+    return response(200, 'SUCCESSFULLY', result.data);
   }
 }
